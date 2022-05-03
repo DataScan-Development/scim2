@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -64,10 +65,13 @@ public class SchemasController extends SchemaAwareController {
         return resourceDefinitions.stream()
                                   .filter(ResourceTypeDefinition::isDiscoverable)
                                   .map(resourceTypeDefinition -> {
-                                      if (resourceTypeDefinition.getCoreSchema() != null) {
-                                          return Collections.singletonList(resourceTypeDefinition.getCoreSchema());
+                                      if (resourceTypeDefinition.getCoreSchema() != null && resourceTypeDefinition.getSchemaExtensions().size() > 0) {
+                                          List<SchemaResource> resourceList = new ArrayList<>();
+                                          resourceList.add(resourceTypeDefinition.getCoreSchema());
+                                          resourceList.addAll(resourceTypeDefinition.getSchemaExtensions().keySet());
+                                          return resourceList;
                                       }
-                                      return resourceTypeDefinition.getSchemaExtensions().keySet();
+                                      return Collections.singletonList(resourceTypeDefinition.getCoreSchema());
                                   })
                                   .flatMap(Collection::stream)
                                   .map(SchemaResource::asGenericScimResource)
