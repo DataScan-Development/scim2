@@ -72,8 +72,6 @@ import java.util.stream.Collectors;
  * https://tools.ietf.org/html/rfc7643#page-29
  */
 @ScimResource(description = "SCIM 2.0 Resource Type", name = "ResourceType", schema = ResourceTypeResource.class, discoverable = false)
-@RestController
-@RequestMapping(value = ApiConstants.RESOURCE_TYPES_ENDPOINT)
 public class ResourceTypesController extends SchemaAwareController {
 
     @Autowired

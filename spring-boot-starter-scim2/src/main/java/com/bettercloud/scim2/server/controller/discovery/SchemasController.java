@@ -51,8 +51,6 @@ import java.util.stream.Collectors;
  * https://tools.ietf.org/html/rfc7643#page-29
  */
 @ScimResource(description = "SCIM 2.0 Schema", name = "Schema", schema = SchemaResource.class, discoverable = false)
-@RestController
-@RequestMapping(value = ApiConstants.SCHEMAS_ENDPOINT)
 public class SchemasController extends SchemaAwareController {
 
     @Autowired
