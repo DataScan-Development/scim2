@@ -35,8 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
               name = "ServiceProviderConfig",
               schema = ServiceProviderConfigResource.class,
               discoverable = false)
-@RestController
-@RequestMapping(value = ApiConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT)
 public class ServiceProviderConfigController extends BaseResourceController<ServiceProviderConfigResource> {
 
     private ServiceProviderConfigResource serviceProviderConfigResource;
