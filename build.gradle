@@ -3,29 +3,13 @@ plugins {
 }
 
 group "com.bettercloud"
-version "1.0.3-custom"
+version "1.0.4-custom"
 
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-if (!hasProperty("ossrhUsername")) {
-    ext.ossrhUsername = ""
-}
-if (!hasProperty("ossrhPassword")) {
-    ext.ossrhPassword = ""
-}
-if (!hasProperty("nexusUrl")) {
-    ext.nexusUrl = ""
-}
-if (!hasProperty("nexusUsername")) {
-    ext.nexusUsername = ""
-}
-if (!hasProperty("nexusPassword")) {
-    ext.nexusPassword = ""
-}
-
 allprojects {
     apply plugin: "io.spring.dependency-management"
-    apply plugin: "maven"
+    apply plugin: "maven-publish"
     apply plugin: "java-library"
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -59,65 +43,50 @@ subprojects {
         testImplementation "junit:junit"
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        archiveClassifier.set("javadoc")
-        from javadoc
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier.set("sources")
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives javadocJar, sourcesJar
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
 
     signing {
-        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+        required { isReleaseVersion && gradle.taskGraph.hasTask("publications") }
         sign configurations.archives
     }
 
-    uploadArchives {
+    publishing {
+        def nexusUser = hasProperty('NEXUS_CREDS_USR') ? nexusUsername : System.getenv('NEXUS_CREDS_USR')
+        def nexusPassword = hasProperty('NEXUS_CREDS_PSW') ? nexusPassword : System.getenv('NEXUS_CREDS_PSW')
+        def nexusUrl = hasProperty('NEXUS_URL') ? nexusUrl : System.getenv('NEXUS_URL')
+
         repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+            maven {
+                url = nexusUrl
+                credentials {
+                    username = nexusUser
+                    password = nexusPassword
                 }
-
-                snapshotRepository(url: nexusUrl) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-
-                pom.project {
-                    name "SCIM 2.0 SDK for Spring"
+            }
+        }
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                pom {
+                    name = 'SCIM 2.0 SDK for Spring'
                     packaging "jar"
-                    description "SCIM 2.0 SDK for Spring"
-                    url "https://github.com/BetterCloud/scim2"
-
-                    scm {
-                        connection "https://github.com/BetterCloud/scim2.git"
-                        developerConnection "https://github.com/BetterCloud/scim2.git"
-                        url "https://github.com/BetterCloud/scim2"
-                    }
-
+                    description = 'SCIM 2.0 SDK for Spring'
+                    url = 'https://github.com/BetterCloud/scim2'
                     licenses {
                         license {
-                            name "MIT"
-                            url "https://github.com/BetterCloud/scim2/blob/master/README.md"
+                            name = 'MIT'
+                            url = 'https://github.com/BetterCloud/scim2/blob/master/README.md'
                         }
                     }
-
                     developers {
-                        [
-                                developer {
-                                    id "daniel-lynch"
-                                    name "Daniel Lynch"
-                                    email "dantlynch@gmail.com"
-                                }
-                        ]
+                        developer {
+                            id = 'daniel-lynch'
+                            name = 'Daniel Lynch'
+                            email = 'dantlynch@gmail.com'
+                        }
                     }
                 }
             }
@@ -125,11 +94,6 @@ subprojects {
     }
 }
 
-uploadArchives {
-    dependsOn = subprojects.uploadArchives
-    enabled = false
-}
-
 wrapper {
-    gradleVersion = '5.2.1'
+    gradleVersion = '7.4.2'
 }
