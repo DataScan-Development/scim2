@@ -23,7 +23,7 @@ public class SchemasControllerTest {
 
     @Test
     public void search() throws ScimException {
-        final ListResponse<GenericScimResource> response = schemasController.search(null);
+        final ListResponse<GenericScimResource> response = schemasController.search();
         assertNotNull(response);
     }
 

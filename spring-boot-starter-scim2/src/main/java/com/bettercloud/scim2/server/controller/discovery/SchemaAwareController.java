@@ -44,20 +44,14 @@ public abstract class SchemaAwareController extends BaseResourceController<Gener
      * Service SCIM request to retrieve all resource types or schemas defined at the
      * service provider using GET.
      *
-     * @param filterString The filter string used to request a subset of resources.
-     *
      * @return All resource types in a ListResponse container.
      *
      * @throws ScimException If an error occurs.
      */
     @GetMapping
-    public ListResponse<GenericScimResource> search(
-            @RequestParam(value = ApiConstants.QUERY_PARAMETER_FILTER, required = false) final String filterString) throws ScimException {
+    public ListResponse<GenericScimResource> search() throws ScimException {
 
-        final List<GenericScimResource> filteredResources = StringUtils.isEmpty(filterString)
-                                                            ? resources
-                                                            : filterResources(Filter.fromString(filterString));
-        final List<GenericScimResource> preparedResources = genericScimResourceConverter.convert(null, null, filteredResources);
+        final List<GenericScimResource> preparedResources = genericScimResourceConverter.convert(null, null, resources);
 
         return new ListResponse<>(preparedResources.size(), preparedResources, 1, preparedResources.size());
     }

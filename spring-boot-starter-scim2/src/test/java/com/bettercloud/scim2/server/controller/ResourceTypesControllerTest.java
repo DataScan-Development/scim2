@@ -23,7 +23,7 @@ public class ResourceTypesControllerTest {
 
     @Test
     public void search() throws ScimException {
-        final ListResponse<GenericScimResource> response = resourceTypesController.search(null);
+        final ListResponse<GenericScimResource> response = resourceTypesController.search();
         assertNotNull(response);
     }
 
