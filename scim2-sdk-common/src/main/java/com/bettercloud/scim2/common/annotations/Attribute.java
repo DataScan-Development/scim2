@@ -20,11 +20,12 @@ package com.bettercloud.scim2.common.annotations;
 
 import com.bettercloud.scim2.common.types.AttributeDefinition;
 
-import javax.lang.model.type.NullType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import javax.lang.model.type.NullType;
 
 /**
  * Annotation for getter methods of a SCIM object.
